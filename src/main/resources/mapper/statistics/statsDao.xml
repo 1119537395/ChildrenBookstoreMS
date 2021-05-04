@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fish.statistics.dao.StatsDao">
+
+
+    <!-- 查询柱形图的统计数据 -->
+    <select id="queryMediaCharData" resultType="com.fish.statistics.domain.BaseEntity">
+        SELECT
+            book_type as name, count(*) as value
+        FROM
+            cbs_book
+        GROUP BY
+            book_type
+    </select>
+
+    <!-- 查询扇形图的统计数据 -->
+    <select id="loadMediaFanChartData" resultType="com.fish.statistics.domain.BaseEntity">
+        SELECT b1.book_name as name,sum(o1.order_sell_number) as value
+        FROM
+            cbs_order o1
+                LEFT JOIN
+            cbs_book b1
+            ON
+                o1.book_id = b1.book_id
+        GROUP BY
+            b1.book_name
+    </select>
+
+
+
+</mapper>

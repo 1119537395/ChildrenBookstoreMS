@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fish.business.dao.BookDao">
+
+    <!-- 实体类映射 -->
+    <resultMap id="BaseResultMap" type="com.fish.business.domain.Book">
+        <id column="book_id" jdbcType="VARCHAR" property="bookId"/>
+        <result column="book_name" jdbcType="VARCHAR" property="bookName"/>
+        <result column="book_author" jdbcType="VARCHAR" property="bookAuthor"/>
+        <result column="book_press" jdbcType="VARCHAR" property="bookPress"/>
+        <result column="book_type" jdbcType="VARCHAR" property="bookType"/>
+        <result column="book_stock_number" jdbcType="INTEGER" property="bookStockNumber"/>
+        <result column="book_buy_price" jdbcType="DECIMAL" property="bookBuyPrice"/>
+        <result column="book_sell_price" jdbcType="DECIMAL" property="bookSellPrice"/>
+        <result column="book_pack" property="bookPack"/>
+        <result column="book_state" jdbcType="INTEGER" property="bookState"/>
+        <result column="book_image_url" jdbcType="VARCHAR" property="bookImageUrl"/>
+        <result column="book_info" jdbcType="VARCHAR" property="bookInfo"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user_id" jdbcType="INTEGER" property="createUserId"/>
+        <result column="create_user_name" property="createUserName"/>
+    </resultMap>
+
+    <!-- 全部字段 -->
+    <sql id="Base_Column_List">
+        book_id, book_name, book_author, book_press, book_type, book_stock_number, book_buy_price,
+    book_sell_price,book_pack, book_state, book_image_url, book_info, create_time, create_user_id
+    </sql>
+
+    <!-- 关联表查询 -->
+    <sql id="allColumn">
+        SELECT book_id,
+               book_name,
+               book_author,
+               book_press,
+               book_type,
+               book_stock_number,
+               book_buy_price,
+               book_sell_price,
+               book_pack,
+               book_state,
+               book_image_url,
+               book_info,
+               c1.create_time,
+               create_user_id,
+               u1.user_name as create_user_name
+        FROM cbs_book c1
+                 LEFT JOIN sys_user u1
+                           ON c1.create_user_id = u1.user_id
+    </sql>
+
+    <!-- 查询书籍信息 -->
+    <select id="queryBookInfo" resultMap="BaseResultMap">
+        <include refid="allColumn"/>
+        <where>
+            <if test="bookId != null and bookId != ''">
+                and book_id like concat("%",#{bookId},"%")
+            </if>
+            <if test="bookName != null and bookName != ''">
+                and book_name like concat("%",#{bookName},"%")
+            </if>
+            <if test="bookState !=null">
+                and book_state = #{bookState}
+            </if>
+        </where>
+        ORDER BY c1.create_time DESC
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cbs_book
+        where book_id = #{bookId,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete
+        from cbs_book
+        where book_id = #{bookId,jdbcType=VARCHAR}
+    </delete>
+
+    <insert id="insert" parameterType="com.fish.business.domain.Book">
+        insert into cbs_book (book_id, book_name, book_author,
+                              book_press, book_type, book_stock_number,
+                              book_buy_price, book_sell_price, book_pack, book_state,
+                              book_image_url, book_info, create_time,
+                              create_user_id)
+        values (#{bookId,jdbcType=VARCHAR}, #{bookName,jdbcType=VARCHAR}, #{bookAuthor,jdbcType=VARCHAR},
+                #{bookPress,jdbcType=VARCHAR}, #{bookType,jdbcType=VARCHAR}, #{bookStockNumber,jdbcType=INTEGER},
+                #{bookBuyPrice,jdbcType=DECIMAL}, #{bookSellPrice,jdbcType=DECIMAL}, #{bookPack},
+                #{bookState,jdbcType=INTEGER},
+                #{bookImageUrl,jdbcType=VARCHAR}, #{bookInfo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+                #{createUserId,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.fish.business.domain.Book">
+        insert into cbs_book
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                book_id,
+            </if>
+            <if test="bookName != null">
+                book_name,
+            </if>
+            <if test="bookAuthor != null">
+                book_author,
+            </if>
+            <if test="bookPress != null">
+                book_press,
+            </if>
+            <if test="bookType != null">
+                book_type,
+            </if>
+            <if test="bookStockNumber != null">
+                book_stock_number,
+            </if>
+            <if test="bookBuyPrice != null">
+                book_buy_price,
+            </if>
+            <if test="bookSellPrice != null">
+                book_sell_price,
+            </if>
+            <if test="bookPack != null">
+                book_pack,
+            </if>
+            <if test="bookState != null">
+                book_state,
+            </if>
+            <if test="bookImageUrl != null">
+                book_image_url,
+            </if>
+            <if test="bookInfo != null">
+                book_info,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                #{bookId,jdbcType=VARCHAR},
+            </if>
+            <if test="bookName != null">
+                #{bookName,jdbcType=VARCHAR},
+            </if>
+            <if test="bookAuthor != null">
+                #{bookAuthor,jdbcType=VARCHAR},
+            </if>
+            <if test="bookPress != null">
+                #{bookPress,jdbcType=VARCHAR},
+            </if>
+            <if test="bookType != null">
+                #{bookType,jdbcType=VARCHAR},
+            </if>
+            <if test="bookStockNumber != null">
+                #{bookStockNumber,jdbcType=INTEGER},
+            </if>
+            <if test="bookBuyPrice != null">
+                #{bookBuyPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="bookSellPrice != null">
+                #{bookSellPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="bookPack != null">
+                #{bookPack},
+            </if>
+            <if test="bookState != null">
+                #{bookState,jdbcType=INTEGER},
+            </if>
+            <if test="bookImageUrl != null">
+                #{bookImageUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="bookInfo != null">
+                #{bookInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.fish.business.domain.Book">
+        update cbs_book
+        <set>
+            <if test="bookName != null">
+                book_name = #{bookName,jdbcType=VARCHAR},
+            </if>
+            <if test="bookAuthor != null">
+                book_author = #{bookAuthor,jdbcType=VARCHAR},
+            </if>
+            <if test="bookPress != null">
+                book_press = #{bookPress,jdbcType=VARCHAR},
+            </if>
+            <if test="bookType != null">
+                book_type = #{bookType,jdbcType=VARCHAR},
+            </if>
+            <if test="bookStockNumber != null">
+                book_stock_number = #{bookStockNumber,jdbcType=INTEGER},
+            </if>
+            <if test="bookBuyPrice != null">
+                book_buy_price = #{bookBuyPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="bookSellPrice != null">
+                book_sell_price = #{bookSellPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="bookPack != null">
+                book_pack = #{bookPack},
+            </if>
+            <if test="bookState != null">
+                book_state = #{bookState,jdbcType=INTEGER},
+            </if>
+            <if test="bookImageUrl != null">
+                book_image_url = #{bookImageUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="bookInfo != null">
+                book_info = #{bookInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUserId != null">
+                create_user_id = #{createUserId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where book_id = #{bookId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.fish.business.domain.Book">
+        update cbs_book
+        set book_name         = #{bookName,jdbcType=VARCHAR},
+            book_author       = #{bookAuthor,jdbcType=VARCHAR},
+            book_press        = #{bookPress,jdbcType=VARCHAR},
+            book_type         = #{bookType,jdbcType=VARCHAR},
+            book_stock_number = #{bookStockNumber,jdbcType=INTEGER},
+            book_buy_price    = #{bookBuyPrice,jdbcType=DECIMAL},
+            book_sell_price   = #{bookSellPrice,jdbcType=DECIMAL},
+            book_state        = #{bookState,jdbcType=INTEGER},
+            book_image_url    = #{bookImageUrl,jdbcType=VARCHAR},
+            book_info         = #{bookInfo,jdbcType=VARCHAR},
+            create_time       = #{createTime,jdbcType=TIMESTAMP},
+            create_user_id    = #{createUserId,jdbcType=INTEGER}
+        where book_id = #{bookId,jdbcType=VARCHAR}
+    </update>
+
+</mapper>
